@@ -16,6 +16,15 @@ enum SectionType {
     case productPhotos(images: [UIImage])
     case productInfo(viewModels: [TextCellViewModel])
     case relatedProducts
+    
+    var title: String? {
+        switch self {
+        case .relatedProducts:
+            return "Related Products"
+        default:
+            return nil
+        }
+    }
 }
 
 class ViewController: UIViewController {
@@ -116,6 +125,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         case .relatedProducts:
             return UITableView.automaticDimension
         }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionType = sections[section]
+        
+        return sectionType.title
     }
 }
 
