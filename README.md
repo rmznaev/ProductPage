@@ -1,5 +1,8 @@
-# ProductPage
-Writing product page of the Amazon (Swift 5 - Programmaticially)
+## Amazon Product Page
+
+* Swift 5
+* UIKit - Programmaticially 
+* UITableView + UICollectionView
 
 ![](amazonOne.png)
 ![](amazonTwo.png)
