@@ -15,7 +15,7 @@ struct TextCellViewModel {
 enum SectionType {
     case productPhotos(images: [UIImage])
     case productInfo(viewModels: [TextCellViewModel])
-    case relatedProducts
+    case relatedProducts(viewModels: [RelatedProductTableViewCellModel])
     
     var title: String? {
         switch self {
@@ -36,6 +36,8 @@ class ViewController: UIViewController {
         view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.register(PhotoCarouselTableViewCell.self,
                       forCellReuseIdentifier: PhotoCarouselTableViewCell.identifier)
+        view.register(RelatedProductTableViewCell.self,
+                      forCellReuseIdentifier: RelatedProductTableViewCell.identifier)
         
         return view
     }()
@@ -76,7 +78,16 @@ class ViewController: UIViewController {
                 font: .systemFont(ofSize: 22)
             )
         ]))
-        sections.append(.relatedProducts)
+        sections.append(.relatedProducts(viewModels: [
+            RelatedProductTableViewCellModel(title: "Amazon TV remote controller",
+                                             image: UIImage(named: "relatedOne")),
+            RelatedProductTableViewCellModel(title: "Meet the need Bag",
+                                             image: UIImage(named: "relatedTwo")),
+            RelatedProductTableViewCellModel(title: "Canon Photography Camera",
+                                             image: UIImage(named: "relatedThree")),
+            RelatedProductTableViewCellModel(title: "Book by Stephen Hawking",
+                                             image: UIImage(named: "relatedFour")),
+        ]))
     }
 }
 
@@ -86,7 +97,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        let sectionType = sections[section]
+        
+        switch sectionType {
+        case .productPhotos:
+            return 1
+        case .productInfo(let viewModels):
+            return viewModels.count
+        case .relatedProducts(let viewModels):
+            return viewModels.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -105,14 +125,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             )
             cell.configure(with: model)
             return cell
-        case .relatedProducts:
-            break
+        case .relatedProducts(let viewModels):
+            guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: RelatedProductTableViewCell.identifier,
+                    for: indexPath) as? RelatedProductTableViewCell else { fatalError() }
+            cell.configure(with: viewModels[indexPath.row])
+            return cell
         }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = "Hello World"
-        
-        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -123,7 +142,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         case .productInfo:
             return UITableView.automaticDimension
         case .relatedProducts:
-            return UITableView.automaticDimension
+            return 150 //UITableView.automaticDimension
         }
     }
     
